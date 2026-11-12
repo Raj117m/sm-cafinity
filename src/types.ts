@@ -1,0 +1,14 @@
+export type Status='CANCELLATION_PENDING'|'NEW'|'PREPARING'|'READY'|'SERVED'|'CANCELLED';
+export type Option={id:string;name:string;price:number;group:string};
+export type Product={id:number;category_id:number;name:string;description:string;price:number;compare_at_price:number|null;image:string;pairing_product_id:number|null;pairing_reason:string;available:number;orderable:boolean;ingredients:number[];options:Option[]};
+export type Item={id:number;product_id:number;name:string;quantity:number;unit_price:number;options:string};
+export type Order={id:number;bill_id:number;table_id:number|null;customer_id?:number;status:Status;preparing_at?:number|null;ready_at?:number|null;served_at?:number|null;total:number;notes:string;deadline:number;created_at:number;items:Item[];canCancel?:boolean};
+export type Payment={id:number;amount:number;method:string;created_at:number;voided_at:number|null;void_reason:string|null};
+export type Bill={id:number;table_id:number|null;status:'OPEN'|'PAID'|'CLOSED';gross:number;discount:number;total:number;paid:number;outstanding:number;orders:Order[];payments:Payment[]};
+export type Game={id:number;name:string;description:string;image:string;available:number;quantity_total:number;available_count:number;in_use:number};
+export type GameRequest={id:number;game_id:number;name:string;table_id:number;status:'REQUESTED'|'DELIVERED'|'RETURNED';created_at:number};
+export type Staff={id:number;name:string;username:string;role:'owner'|'staff';active:number};
+export type Settings={cafeName:string;tableCount:number;cancellationSeconds:number;earnCoins:number;earnPer:number;coinValue:number;maxDiscountPercent:number;suggestionCoins:number;cooldownDays:number};
+export type Snapshot={demo:boolean;now:number;settings:Settings;tables:{id:number;token:string;active:number}[];categories:{id:number;name:string}[];ingredients:{id:number;name:string;available:number}[];products:Product[];games:Game[];orders:Order[];bills:Bill[];gameRequests:GameRequest[];suggestions:{normalized:string;name:string;count:number;people:number;reviewed:number;recent:number}[];customer:{id:number;name:string;balance:number}|null;demoCustomers:{id:number;name:string}[];loyalty:{id:number;coins:number;reason:string;created_at:number}[];staff:Staff|null;staffAccounts:Staff[];audit:{id:number;actor:string;action:string;entity:string;details:string;created_at:number}[]};
+export type CartLine={productId:number;quantity:number;options:string[]};
+export type Report={sales:number;paidOrders:number;average:number;products:{name:string;quantity:number}[];ingredients:{name:string;quantity:number}[];games:{name:string;quantity:number}[];refunds:{id:number;amount:number;void_reason:string}[]};

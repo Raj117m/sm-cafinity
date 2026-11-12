@@ -1,0 +1,37 @@
+{
+  "name": "sm-cafinity-server-demo",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "SM Cafinity Smart Café Management System developed by ATOMZ",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "start": "node backend/server.mjs",
+    "test": "node tests/core.test.mjs && node tests/ui.test.mjs",
+    "test:load": "node tests/load.mjs"
+  },
+  "dependencies": {
+    "lucide-react": "^0.475.0",
+    "qrcode": "^1.5.4",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.0.0",
+    "@testing-library/react": "^16.2.0",
+    "@types/qrcode": "^1.5.5",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "jsdom": "^26.0.0",
+    "tailwindcss": "^4.0.0",
+    "typescript": "^5.7.3",
+    "vite": "^6.1.0",
+    "@testing-library/dom": "^10.4.2",
+    "esbuild": "^0.25.12"
+  },
+  "engines": {
+    "node": ">=22.13.0"
+  }
+}

@@ -1,0 +1,9 @@
+node_modules/
+node_modules-existing
+.env
+.env.local
+data/
+dist/
+tests/.ui-build.mjs
+*.tsbuildinfo
+.DS_Store

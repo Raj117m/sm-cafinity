@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 220" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="320" y2="220" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFF5EB"/>
+      <stop offset="1" stop-color="#F6E3CF"/>
+    </linearGradient>
+    <radialGradient id="foam" cx="0.5" cy="0.4" r="0.6">
+      <stop stop-color="#FFFDF9"/>
+      <stop offset="1" stop-color="#EAD2BA"/>
+    </radialGradient>
+  </defs>
+  <rect width="320" height="220" fill="url(#bg)"/>
+  <ellipse cx="160" cy="176" rx="88" ry="18" fill="#1C1917" fill-opacity="0.1"/>
+  <ellipse cx="160" cy="166" rx="76" ry="20" fill="#FBF8F4" stroke="#E2D3C1" stroke-width="2"/>
+  <path d="M100 100h116v28c0 24-22 42-58 42s-58-18-58-42v-28Z" fill="#292524"/>
+  <path d="M216 108h14c10 0 17 7 17 16s-7 16-17 16h-14" stroke="#292524" stroke-width="10" stroke-linecap="round"/>
+  <ellipse cx="158" cy="100" rx="58" ry="18" fill="#B45309"/>
+  <ellipse cx="158" cy="99" rx="51" ry="14" fill="url(#foam)"/>
+  <path d="M158 92c-8-7-20-2-20 6 0 7 11 11 20 16 9-5 20-9 20-16 0-8-12-13-20-6Z" fill="#9A3412" fill-opacity="0.55"/>
+  <path d="M138 66c0-8 7-11 7-20M162 62c0-9 7-12 7-22M184 68c0-7 6-10 6-18" stroke="#EA580C" stroke-opacity="0.4" stroke-width="3" stroke-linecap="round"/>
+</svg>

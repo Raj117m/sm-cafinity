@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: sm-cafinity-demo
+    runtime: node
+    plan: free
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: 22.16.0
+      - key: DEMO_MODE
+        value: "true"
+      - key: HOSTED_DEMO
+        value: "true"
+      - key: VITE_HOSTED_DEMO
+        value: "true"
+      - key: COOKIE_SECURE
+        value: "true"
+      - key: OWNER_PASSWORD
+        generateValue: true
+      - key: STAFF_PASSWORD
+        generateValue: true

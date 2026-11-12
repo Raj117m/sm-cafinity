@@ -1,0 +1,29 @@
+{
+  "measured_at": "2026-11-11T17:07:01.315Z",
+  "environment": "Node HTTP listener injection + file-backed SQLite WAL, 30 independent cookie sessions on one process. No network sockets, browser rendering or physical devices.",
+  "sessions": 30,
+  "menu_handler": {
+    "p50_ms": 10.5,
+    "p95_ms": 19.12,
+    "max_ms": 21.03
+  },
+  "order_handler": {
+    "p50_ms": 20.97,
+    "p95_ms": 21.87,
+    "max_ms": 22.01
+  },
+  "actionable_event_after_deadline": {
+    "p50_ms": 119,
+    "p95_ms": 127,
+    "max_ms": 128
+  },
+  "database_status_query": {
+    "p50_ms": 0.07,
+    "p95_ms": 0.12,
+    "max_ms": 1.86
+  },
+  "orders_after_retry": 30,
+  "reconnect_snapshot_orders": 31,
+  "assertions": "30 successful orders, 30 actionable notifications, no duplicate retry writes, missed order recovered through snapshot",
+  "limits": "Not a real network or browser load test. Event timings exclude transmission, frontend rendering, Wi-Fi and device latency."
+}
