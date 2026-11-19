@@ -14,11 +14,24 @@ const lines=[
 
 export const CAFE_QUOTES:CafeQuote[]=headlines.flatMap(([lead,accent])=>lines.map(line=>({lead,accent,line})));
 
-export function sessionCafeQuote():CafeQuote{
- const key='sm-cafinity-hero-quote-v1';
- let index=Number(sessionStorage.getItem(key));
- if(!Number.isInteger(index)||index<0||index>=CAFE_QUOTES.length){
-  const random=new Uint32Array(1);crypto.getRandomValues(random);index=random[0]%CAFE_QUOTES.length;sessionStorage.setItem(key,String(index));
- }
- return CAFE_QUOTES[index];
+let visitQuote: CafeQuote | undefined;
+
+export function sessionCafeQuote(): CafeQuote {
+  if (visitQuote) return visitQuote;
+
+  const key = 'sm-cafinity-last-headline';
+  let previous: string | null = null;
+  try {
+    previous = localStorage.getItem(key);
+  } catch {
+    // Private or restricted browsing can block storage.
+  }
+  const choices = CAFE_QUOTES.filter(quote => quote.lead !== previous);
+  visitQuote = choices[Math.floor(Math.random() * choices.length)];
+  try {
+    localStorage.setItem(key, visitQuote.lead);
+  } catch {
+    // The current page still keeps its selected quote.
+  }
+  return visitQuote;
 }
