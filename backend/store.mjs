@@ -31,6 +31,10 @@ export function createStore(path='data/cafe.sqlite'){
   ['Aarav · test account','Diya · test account'].forEach((x,i)=>{run('INSERT INTO customers(id,name,created_at) VALUES(?,?,?)',i+1,x,Date.now());run('INSERT INTO loyalty_transactions(customer_id,coins,reason,unique_key,created_at) VALUES(?,?,?,?,?)',i+1,25,'Demo welcome coins','seed-'+i,Date.now());});
  });}
  if(!one('SELECT id FROM cafe_settings'))seed();
+ else {
+  if(process.env.OWNER_PASSWORD)run("UPDATE staff_profiles SET password_hash=? WHERE username='owner'",password(process.env.OWNER_PASSWORD));
+  if(process.env.STAFF_PASSWORD)run("UPDATE staff_profiles SET password_hash=? WHERE username='staff'",password(process.env.STAFF_PASSWORD));
+ }
  const settings=()=>JSON.parse(one('SELECT data FROM cafe_settings WHERE id=1').data);
  const balance=id=>one('SELECT COALESCE(SUM(coins),0) n FROM loyalty_transactions WHERE customer_id=?',id).n;
  const products=()=>all('SELECT * FROM products WHERE active=1').map(p=>({...p,options:JSON.parse(p.options),ingredients:all('SELECT ingredient_id FROM product_ingredients WHERE product_id=?',p.id).map(x=>x.ingredient_id),orderable:!!p.available&&!one('SELECT 1 FROM product_ingredients pi JOIN ingredients i ON i.id=pi.ingredient_id WHERE pi.product_id=? AND i.available=0',p.id)}));
