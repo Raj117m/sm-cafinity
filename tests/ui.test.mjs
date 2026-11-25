@@ -28,3 +28,15 @@ test('customer UI: optional account, suggestion earns coins, ingredient menu upd
 test('staff UI: separate auth, counter order, payment modal and paid state',async()=>{
  cleanup();history.pushState({},'','/staff');render(React.createElement(App));await screen.findByText('Welcome back.');fireEvent.change(screen.getByLabelText('Password'),{target:{value:'CafinityOwner!26'}});click('Open dashboard');await screen.findByText('Start new orders, then mark them ready and served.');click('Counter order');click('Add Black Coffee');click('Confirm & send order');await screen.findByText('Counter order sent to kitchen');const o=app.store.all("SELECT id FROM orders WHERE source='COUNTER'")[0];assert.equal(app.store.order(o.id).status,'NEW');click('Tables & payments');click(/Bill #\d+ · Counter/);click('Record Payment');fireEvent.click(screen.getByRole('checkbox'));click('Confirm Payment');await waitFor(()=>assert.equal(app.store.bill(app.store.order(o.id).bill_id).status,'PAID'));assert.ok(cookies.get('staff').startsWith('cafe_staff='));assert.ok(cookies.get('guest').startsWith('cafe_session='));
 });
+test('customer UI: Events tab and staff UI: Attendance tab with 6-staff roster',async()=>{
+ cleanup();history.pushState({},'','/');render(React.createElement(App));await screen.findByText('WELCOME TO SM CAFINITY');click(/Open the menu/);await screen.findByText('From our kitchen');
+ click('Events');await screen.findByText('Café Gatherings');assert.ok(screen.getByRole('button',{name:/Request or Host an Event/}));
+ cleanup();history.pushState({},'','/staff');render(React.createElement(App));await screen.findByText('Start new orders, then mark them ready and served.');
+ click('Attendance');await screen.findByText(/Live Staff Roster Today/);
+ assert.ok(screen.getAllByText('Rajdeep · Café Owner').length >= 1);
+ assert.ok(screen.getByText('Aarav Sharma · Head Barista'));
+ assert.ok(screen.getByText('Rohan Mehta · Senior Barista'));
+ assert.ok(screen.getByText('Priya Verma · Kitchen & Pastry Chef'));
+ assert.ok(screen.getByText('Vikram Rao · Board Games & Host'));
+ assert.ok(screen.getByText('Ananya Sen · Operations Lead'));
+});

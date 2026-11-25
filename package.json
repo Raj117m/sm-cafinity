@@ -8,7 +8,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "start": "node backend/server.mjs",
-    "test": "node tests/core.test.mjs && node tests/ui.test.mjs",
+    "test": "node tests/core.test.mjs && node tests/ui.test.mjs && node tests/new_features.test.mjs",
     "test:load": "node tests/load.mjs"
   },
   "dependencies": {

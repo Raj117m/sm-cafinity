@@ -1,4 +1,5 @@
 import {useEffect,useRef,useState} from 'react';
+import {Sparkles} from 'lucide-react';
 import type {Product} from './types';
 import {money} from './api';
 
@@ -42,7 +43,10 @@ export function MenuProduct({product:p,quantity,disabled,add,customize,children}
   },[]);
   return <><div ref={ref} className={`menu-product-row ${revealed?'title-settled':''}`}>
     <button className="menu-product-image" onClick={customize} aria-label={`View ${p.name}`}><img src={p.image} alt="" loading="lazy"/></button>
-    <h3 className="travelling-title">{p.name}</h3>
+    <h3 className="travelling-title">
+      {p.name}
+      {p.surplus_boost && <span className="surplus-badge" title="Chef's fresh surplus feature"><Sparkles size={10} /> Chef's Feature</span>}
+    </h3>
     <div className="menu-product-description"><p>{p.description}</p><div className="menu-price">{p.compare_at_price&&<del>{money(p.compare_at_price)}</del>}<strong>{money(p.price)}</strong></div></div>
     <div className="menu-product-actions">
       {p.options.length>0&&<button className="customize-link" onClick={customize} disabled={disabled}>Customize</button>}

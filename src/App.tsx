@@ -2,6 +2,9 @@ import {MenuProduct,PairSnack} from "./MenuProduct";
 import {CoinWheel} from './CoinWheel';
 import { TimerRing } from "./TimerRing";
 import { Reveal } from "./Reveal";
+import { AttendanceView } from "./AttendanceView";
+import { EventsStaffView } from "./EventsStaffView";
+import { CustomerEventsView } from "./CustomerEventsView";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Coffee,
@@ -31,6 +34,7 @@ import {
   Clock,
   Wifi,
   WifiOff,
+  Calendar,
 } from "lucide-react";
 import type { ReactNode } from "react";
 import type {
@@ -474,6 +478,18 @@ function CustomerOrderTracker({ order, now }: { order: Order; now: number }) {
           <Check size={17} /> Ready
         </span>
       </div>
+      {order.queueAhead !== undefined && order.queueAhead > 0 && (
+        <div className="queue-ahead-tag" role="status">
+          <Clock size={15} />
+          <span><b>{order.queueAhead}</b> {order.queueAhead === 1 ? 'order' : 'orders'} ahead in kitchen queue</span>
+        </div>
+      )}
+      {order.queueAhead === 0 && (order.status === 'NEW' || order.status === 'PREPARING') && (
+        <div className="queue-ahead-tag" style={{ background: '#ecf4eb', borderColor: '#c2dcbe', color: '#2d5e2a' }} role="status">
+          <Flame size={15} />
+          <span><b>Next up in kitchen!</b> Fresh preparation underway.</span>
+        </div>
+      )}
       <div className="customer-ring-wrap">
         <TimerRing
           value={elapsed}
@@ -655,6 +671,14 @@ function Customer({
           ))}
         {tab === "Menu" && (
           <>
+            {data.kitchenQueueCount > 0 && (
+              <div className="queue-banner" role="status">
+                <Clock size={16} />
+                <div>
+                  <strong>Kitchen queue:</strong> {data.kitchenQueueCount} {data.kitchenQueueCount === 1 ? 'order' : 'orders'} currently being prepared in the kitchen.
+                </div>
+              </div>
+            )}
             <section className="menu-hero">
               <div className="eyebrow">SM CAFINITY</div>
               <h1>
@@ -843,6 +867,9 @@ function Customer({
             </section>
           </>
         )}
+        {tab === "Events" && (
+          <CustomerEventsView data={data} act={act} tableId={tableId} />
+        )}
         {tab === "Rewards" && (
           <>
             <div className="page-heading">
@@ -964,6 +991,18 @@ function Customer({
                         <b>Order #{o.id}</b>
                         <Pill status={o.status} />
                       </div>
+                      {o.queueAhead !== undefined && o.queueAhead > 0 && (
+                        <div className="queue-ahead-tag" role="status">
+                          <Clock size={13} />
+                          <span><b>{o.queueAhead}</b> {o.queueAhead === 1 ? 'order' : 'orders'} ahead in kitchen queue</span>
+                        </div>
+                      )}
+                      {o.queueAhead === 0 && (o.status === 'NEW' || o.status === 'PREPARING') && (
+                        <div className="queue-ahead-tag" style={{ background: '#ecf4eb', borderColor: '#c2dcbe', color: '#2d5e2a' }} role="status">
+                          <Flame size={13} />
+                          <span><b>Next up in kitchen!</b></span>
+                        </div>
+                      )}
                       {o.items.map((i) => (
                         <p key={i.id}>
                           {i.quantity} × {i.name}{" "}
@@ -1014,6 +1053,7 @@ function Customer({
         {[
           { name: "Menu", icon: Utensils },
           { name: "Games", icon: Gamepad2 },
+          { name: "Events", icon: Calendar },
           { name: "Rewards", icon: Coins },
           { name: "My Table", icon: Receipt },
         ].map((t) => (
@@ -1317,6 +1357,8 @@ function StaffView({ data, act }: { data: Snapshot; act: Action }) {
   const nav = [
     { name: "Orders", icon: LayoutDashboard },
     { name: "Tables & Billing", icon: Receipt },
+    { name: "Attendance", icon: Clock },
+    { name: "Events", icon: Calendar },
     { name: "Ingredients", icon: Package },
     { name: "Games", icon: Gamepad2 },
     ...(owner
@@ -1350,6 +1392,7 @@ function StaffView({ data, act }: { data: Snapshot; act: Action }) {
                       ? "Reports"
                       : n.name}
               {n.name === "Orders" && newCount > 0 && <b>{newCount}</b>}
+              {n.name === "Events" && data.events.some(e=>e.status==="PENDING") && <b className="game-request-badge" aria-label="Pending event requests" role="status">{data.events.filter(e=>e.status==="PENDING").length}</b>}
               {n.name === "Games" && data.gameRequests.some(r=>r.status==="REQUESTED") && <b className="game-request-badge" aria-label="Pending game requests" role="status">{data.gameRequests.filter(r=>r.status==="REQUESTED").length}</b>}
             </button>
           ))}
@@ -1481,6 +1524,8 @@ function StaffView({ data, act }: { data: Snapshot; act: Action }) {
           </>
         )}
         {tab === "Tables & Billing" && <Billing data={data} act={act} />}
+        {tab === "Attendance" && <AttendanceView data={data} act={act} />}
+        {tab === "Events" && <EventsStaffView data={data} act={act} />}
         {tab === "Ingredients" && (
           <>
             <div className="section-title">
@@ -2437,6 +2482,17 @@ function ProductForm({
             }
           />
         </label>
+        <label>
+          Menu Priority / Manual Surplus Boost (0–50)
+          <input
+            type="number"
+            min={0}
+            max={50}
+            value={v.priority || 0}
+            onChange={(e) => setV({ ...v, priority: Number(e.target.value) })}
+          />
+          <small>Products with higher priority or surplus inventory are pushed up on the guest menu.</small>
+        </label>
         {value.id && (v.price||0)<(value.price||0) && <label className="check-row sale-setting">
           <input type="checkbox" checked={!!v.compare_at_price} onChange={e=>setV({...v,compare_at_price:e.target.checked?value.price:null})}/>
           <span><b>Highlight this price drop</b><small>Show guests the previous price alongside the new one.</small><span className="sale-preview"><del>{money(value.price||0)}</del><strong>{money(v.price||0)}</strong></span></span>
@@ -2691,8 +2747,9 @@ function StaffForm({
 }
 function SettingsForm({ value, act }: { value: Settings; act: Action }) {
   const [v, setV] = useState(value);
+  type NumberSetting = "tableCount" | "cancellationSeconds" | "earnCoins" | "earnPer" | "coinValue" | "maxDiscountPercent" | "suggestionCoins" | "cooldownDays";
   const fields: {
-    key: keyof Settings;
+    key: NumberSetting;
     label: string;
     min: number;
     max: number;
@@ -2771,6 +2828,19 @@ function SettingsForm({ value, act }: { value: Settings; act: Action }) {
             />
           </label>
         ))}
+      </div>
+      <div style={{ margin: "18px 0" }}>
+        <label className="check-row">
+          <input
+            type="checkbox"
+            checked={v.smartInventory ?? true}
+            onChange={(e) => setV({ ...v, smartInventory: e.target.checked })}
+          />
+          <div>
+            <b>Smart Dynamic Inventory Menu Promotion</b>
+            <small>Automatically balances café inventory by promoting products with surplus ingredients and lower recent sales.</small>
+          </div>
+        </label>
       </div>
       <button>Save settings</button>
     </form>
