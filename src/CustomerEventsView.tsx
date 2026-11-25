@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Calendar, Users, CheckCircle2 } from "lucide-react";
+import { Modal } from "./Modal";
 import type { Snapshot, CafeEvent } from "./types";
 
 type Action = <T = unknown>(
@@ -178,11 +179,7 @@ export function CustomerEventsView({
 
       {/* Modal: Request / Host an Event */}
       {requestModal && (
-        <dialog open style={{ display: "block" }}>
-          <div className="modal-head">
-            <h2>Request Café Event</h2>
-            <button className="icon-btn" onClick={() => setRequestModal(false)}>✕</button>
-          </div>
+        <Modal title="Request Café Event" close={() => setRequestModal(false)}>
           <form onSubmit={handleRequestSubmit}>
             <label>
               Event Title
@@ -284,16 +281,12 @@ export function CustomerEventsView({
               </button>
             </div>
           </form>
-        </dialog>
+        </Modal>
       )}
 
       {/* Modal: RSVP for Open Event */}
       {rsvpEvent && (
-        <dialog open style={{ display: "block" }}>
-          <div className="modal-head">
-            <h2>Join {rsvpEvent.title}</h2>
-            <button className="icon-btn" onClick={() => setRsvpEvent(null)}>✕</button>
-          </div>
+        <Modal title={`Join ${rsvpEvent.title}`} close={() => setRsvpEvent(null)}>
           <form onSubmit={handleRsvpSubmit}>
             <p style={{ fontSize: 12, color: "#6a523a", margin: "6px 0 16px" }}>
               Join this open gathering on <b>{rsvpEvent.event_date}</b> from <b>{rsvpEvent.start_time}</b> to <b>{rsvpEvent.end_time}</b> hosted by <b>{rsvpEvent.host_name}</b>.
@@ -317,7 +310,7 @@ export function CustomerEventsView({
               </button>
             </div>
           </form>
-        </dialog>
+        </Modal>
       )}
     </>
   );

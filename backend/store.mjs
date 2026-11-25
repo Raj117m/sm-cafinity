@@ -160,7 +160,7 @@ export function createStore(path='data/cafe.sqlite'){
   });
  };
 
- const queueAhead=(createdAt)=>one("SELECT COUNT(*) n FROM orders WHERE status IN ('NEW','PREPARING') AND created_at < ?", createdAt).n;
+ const queueAhead=(createdAt, id=Infinity)=>one("SELECT COUNT(*) n FROM orders WHERE status IN ('NEW','PREPARING') AND (created_at < ? OR (created_at = ? AND id < ?))", createdAt, createdAt, id).n;
  const kitchenQueueCount=()=>one("SELECT COUNT(*) n FROM orders WHERE status IN ('NEW','PREPARING')").n;
 
  const order=id=>{
@@ -169,7 +169,7 @@ export function createStore(path='data/cafe.sqlite'){
   const transitions=all("SELECT details,created_at FROM audit_events WHERE entity=? AND action='ORDER_STATUS' ORDER BY id",String(id));
   const statusTimes={};
   for(const event of transitions){statusTimes[JSON.parse(event.details).to]=event.created_at;}
-  const ahead = (o.status === 'NEW' || o.status === 'PREPARING') ? queueAhead(o.created_at) : 0;
+  const ahead = (o.status === 'NEW' || o.status === 'PREPARING') ? queueAhead(o.created_at, o.id) : 0;
   return {
    ...o,
    preparing_at:statusTimes.PREPARING||null,

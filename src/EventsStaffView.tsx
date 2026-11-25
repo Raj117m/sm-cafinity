@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Calendar, Users, CheckCircle2, XCircle, Plus } from "lucide-react";
+import { Modal } from "./Modal";
 import type { Snapshot } from "./types";
 
 type Action = <T = unknown>(
@@ -200,11 +201,7 @@ export function EventsStaffView({
 
       {/* Host Event Modal */}
       {createModal && (
-        <dialog open style={{ display: "block" }}>
-          <div className="modal-head">
-            <h2>Schedule Café Event</h2>
-            <button className="icon-btn" onClick={() => setCreateModal(false)}>✕</button>
-          </div>
+        <Modal title="Schedule Café Event" close={() => setCreateModal(false)}>
           <form onSubmit={handleCreate}>
             <label>
               Event Title
@@ -314,7 +311,7 @@ export function EventsStaffView({
               </button>
             </div>
           </form>
-        </dialog>
+        </Modal>
       )}
     </div>
   );

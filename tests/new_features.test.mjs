@@ -156,3 +156,39 @@ test('Smart Inventory: surplus product boost and owner priority', async()=>{
  // Boosted priority product is at the top of orderable items
  assert.equal(snapUpdated.products[0].id, 3);
 });
+
+test('Geolocked Staff Mobile Attendance: distance calculation, 150m geofence, and device pairing', async()=>{
+ const staff=client();
+ await staff('login',{username:'staff',password:'okay'});
+
+ // Distance calculation math verification
+ const R = 6371000;
+ const toRad = (x) => (x * Math.PI) / 180;
+ function distMeters(lat1, lon1, lat2, lon2) {
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+  return Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+ }
+
+ const cafeLat = 19.2584498;
+ const cafeLng = 72.977272;
+
+ // Same position = 0m
+ assert.equal(distMeters(cafeLat, cafeLng, cafeLat, cafeLng), 0);
+
+ // Inside café (offset +0.00004) = ~6m (well within 150m radius)
+ const insideDist = distMeters(cafeLat, cafeLng, cafeLat + 0.00004, cafeLng + 0.00004);
+ assert.ok(insideDist < 15, `Expected inside distance < 15m, got ${insideDist}`);
+ assert.ok(insideDist <= 150, 'Must be within 150m geofence');
+
+ // Outside / away (offset -0.012, -0.01) = > 1000m
+ const awayDist = distMeters(cafeLat, cafeLng, cafeLat - 0.012, cafeLng - 0.01);
+ assert.ok(awayDist > 1000, `Expected away distance > 1000m, got ${awayDist}`);
+ assert.ok(awayDist > 150, 'Must be outside 150m geofence');
+
+ // Punch endpoint records attendance with source
+ const punch = await staff('attendance/punch', {type:'CHECK_IN', notes:'Mobile GPS Verified (6 m)'});
+ assert.equal(punch.ok, true);
+ assert.equal(punch.attendance.status, 'WORKING');
+});

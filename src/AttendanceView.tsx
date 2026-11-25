@@ -10,7 +10,10 @@ import {
   LogOut,
   Users,
   Timer,
+  Smartphone,
+  ArrowUpRight,
 } from "lucide-react";
+import { Modal } from "./Modal";
 import type { Snapshot, RosterStaff, StaffShift } from "./types";
 import { time } from "./api";
 
@@ -111,6 +114,26 @@ export function AttendanceView({
 
   return (
     <div className="attendance-layout">
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "#fcf6ec", border: "1px solid #ebd9c2", borderRadius: 10, padding: "12px 16px", marginBottom: 6 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <span style={{ background: "#493527", color: "#f7ede0", padding: 8, borderRadius: 8, display: "flex" }}>
+            <Smartphone size={18} />
+          </span>
+          <div>
+            <strong style={{ fontSize: 13, color: "#3c2a1c", display: "block" }}>Staff Mobile Attendance Portal</strong>
+            <small style={{ fontSize: 10, color: "#8a735c" }}>Individual geolocked clock-in app for staff mobile browsers at /attendance</small>
+          </div>
+        </div>
+        <a
+          href="/attendance"
+          target="_blank"
+          rel="noreferrer"
+          style={{ background: "#925638", color: "#fff", textDecoration: "none", fontSize: 11, padding: "7px 12px", borderRadius: 7, fontWeight: 600, display: "inline-flex", alignItems: "center", gap: 4 }}
+        >
+          Open Mobile Portal <ArrowUpRight size={13} />
+        </a>
+      </div>
+
       {owner && (
         <div className="filter-tabs" style={{ marginBottom: 16 }}>
           <button
@@ -430,11 +453,7 @@ export function AttendanceView({
 
       {/* Modal: Manual Punch Adjustment */}
       {punchModalStaff && (
-        <dialog open style={{ display: "block" }}>
-          <div className="modal-head">
-            <h2>Manual Punch: {punchModalStaff.name}</h2>
-            <button className="icon-btn" onClick={() => setPunchModalStaff(null)}>✕</button>
-          </div>
+        <Modal title={`Manual Punch: ${punchModalStaff.name}`} close={() => setPunchModalStaff(null)}>
           <form onSubmit={handleManualPunchSubmit}>
             <label>
               Action Type
@@ -475,16 +494,12 @@ export function AttendanceView({
               </button>
             </div>
           </form>
-        </dialog>
+        </Modal>
       )}
 
       {/* Modal: Customize Shift & Hours */}
       {editShift && (
-        <dialog open style={{ display: "block" }}>
-          <div className="modal-head">
-            <h2>Customize Shift: {editShift.staff_name || `Staff #${editShift.staff_id}`}</h2>
-            <button className="icon-btn" onClick={() => setEditShift(null)}>✕</button>
-          </div>
+        <Modal title={`Customize Shift: ${editShift.staff_name || `Staff #${editShift.staff_id}`}`} close={() => setEditShift(null)}>
           <form onSubmit={handleShiftSave}>
             <label>
               Shift Start Time
@@ -548,7 +563,7 @@ export function AttendanceView({
               </button>
             </div>
           </form>
-        </dialog>
+        </Modal>
       )}
     </div>
   );

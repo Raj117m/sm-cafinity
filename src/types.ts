@@ -76,6 +76,8 @@ export type StaffPunch={
   source:string;
 };
 
+export type PunchType = StaffPunch['type'];
+
 export type StaffAttendance={
   staff_id:number;
   status:'NOT_CHECKED_IN'|'WORKING'|'ON_BREAK'|'CHECKED_OUT';

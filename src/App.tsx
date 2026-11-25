@@ -5,6 +5,7 @@ import { Reveal } from "./Reveal";
 import { AttendanceView } from "./AttendanceView";
 import { EventsStaffView } from "./EventsStaffView";
 import { CustomerEventsView } from "./CustomerEventsView";
+import { StaffMobileAttendanceApp } from "./StaffMobileAttendanceApp";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Coffee,
@@ -35,6 +36,7 @@ import {
   Wifi,
   WifiOff,
   Calendar,
+  Smartphone,
 } from "lucide-react";
 import type { ReactNode } from "react";
 import type {
@@ -291,6 +293,8 @@ export function App() {
         <Customer key={search} data={data} search={search} act={act} go={go} />
       ) : path === "/staff" ? (
         <StaffView data={data} act={act} />
+      ) : path === "/attendance" || path === "/clockin" ? (
+        <StaffMobileAttendanceApp data={data} act={act} go={go} />
       ) : path === "/qr" ? (
         <QRPage data={data} />
       ) : (
@@ -360,6 +364,20 @@ function Landing({
               <small>BEHIND THE COUNTER</small>
               <h2>Staff workspace</h2>
               <p>Orders, tables and the daily details.</p>
+            </div>
+            <ArrowUpRight />
+          </button>
+          <button
+            className="entry attendance-entry"
+            onClick={() => go("/attendance")}
+          >
+            <span className="entry-icon">
+              <Smartphone />
+            </span>
+            <div>
+              <small>MOBILE ATTENDANCE PORTAL</small>
+              <h2>Staff clock-in</h2>
+              <p>Geolocked attendance & break timer.</p>
             </div>
             <ArrowUpRight />
           </button>

@@ -40,3 +40,10 @@ test('customer UI: Events tab and staff UI: Attendance tab with 6-staff roster',
  assert.ok(screen.getByText('Vikram Rao · Board Games & Host'));
  assert.ok(screen.getByText('Ananya Sen · Operations Lead'));
 });
+test('third UI: staff mobile geolocked attendance portal and landing entry card',async()=>{
+ cleanup();history.pushState({},'','/');render(React.createElement(App));await screen.findByText('WELCOME TO SM CAFINITY');
+ assert.ok(screen.getByText('Staff clock-in'));
+ click(/Staff clock-in/);
+ await screen.findByText(/STAFF ATTENDANCE PORTAL/);
+ assert.ok(screen.getAllByText(/SM CAFINITY/).length >= 1);
+});

@@ -41,16 +41,45 @@ export function MenuProduct({product:p,quantity,disabled,add,customize,children}
     observer.observe(node);
     return()=>{clearTimeout(timer);observer.disconnect();};
   },[]);
-  return <><div ref={ref} className={`menu-product-row ${revealed?'title-settled':''}`}>
-    <button className="menu-product-image" onClick={customize} aria-label={`View ${p.name}`}><img src={p.image} alt="" loading="lazy"/></button>
-    <h3 className="travelling-title">
-      {p.name}
-      {p.surplus_boost && <span className="surplus-badge" title="Chef's fresh surplus feature"><Sparkles size={10} /> Chef's Feature</span>}
-    </h3>
-    <div className="menu-product-description"><p>{p.description}</p><div className="menu-price">{p.compare_at_price&&<del>{money(p.compare_at_price)}</del>}<strong>{money(p.price)}</strong></div></div>
-    <div className="menu-product-actions">
-      {p.options.length>0&&<button className="customize-link" onClick={customize} disabled={disabled}>Customize</button>}
-      <button className="quick-add" aria-label={`Add ${p.name}`} disabled={disabled||!p.orderable} onClick={add}>{!p.orderable?'Sold out':quantity>0?<><b>{quantity}</b> added <span>+</span></>:<>Add <span>+</span></>}</button>
-    </div>
-  </div>{children}</>;
+  return (
+    <>
+      <div ref={ref} className={`menu-product-row ${revealed?'title-settled':''}`}>
+        <button className="menu-product-image" onClick={customize} aria-label={`View ${p.name}`}>
+          <img src={p.image} alt={p.name} loading="lazy"/>
+        </button>
+        <div className="menu-product-content">
+          <div>
+            <h3 className="travelling-title">
+              {p.name}
+              {p.surplus_boost && <span className="surplus-badge" title="Chef's fresh surplus feature"><Sparkles size={10} /> Chef's Feature</span>}
+            </h3>
+            <p>{p.description}</p>
+          </div>
+          <div className="menu-product-bottom">
+            <div className="menu-price">
+              {p.compare_at_price && <del>{money(p.compare_at_price)}</del>}
+              <strong>{money(p.price)}</strong>
+            </div>
+            <div className="menu-product-actions">
+              {p.options.length>0 && (
+                <button className="secondary customize-link" onClick={customize} disabled={disabled} style={{ minHeight: 34, padding: "5px 10px", fontSize: 11 }}>
+                  Customize
+                </button>
+              )}
+              <button
+                className="quick-add"
+                aria-label={`Add ${p.name}`}
+                disabled={disabled||!p.orderable}
+                onClick={add}
+                style={{ minHeight: 34, padding: "6px 14px", fontSize: 11 }}
+              >
+                {!p.orderable ? 'Sold out' : quantity > 0 ? `${quantity} added · +` : 'Add +'}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      {children}
+    </>
+  );
 }
